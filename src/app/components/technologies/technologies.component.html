@@ -1,0 +1,19 @@
+<section id="technologies" class="technologies-section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Tecnologías & Herramientas</h2>
+      <p class="section-subtitle">
+        Pila completa de tecnologías modernas que uso para crear experiencias digitales excepcionales
+      </p>
+    </div>
+    <div class="technologies-grid" @staggerFade>
+      <div class="tech-item" *ngFor="let tech of technologies">
+        <div class="tech-icon">{{ tech.icon }}</div>
+        <div class="tech-name">{{ tech.name }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
