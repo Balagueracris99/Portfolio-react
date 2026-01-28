@@ -26,8 +26,8 @@ export class ContactComponent {
   };
 
   socialLinks = [
-    { name: 'LinkedIn', icon: '💼', url: 'https://linkedin.com' },
-    { name: 'GitHub', icon: '🐙', url: 'https://github.com' },
+    { name: 'LinkedIn', icon: '💼', url: 'https://www.linkedin.com/in/cristhian-balaguera-barrios/' },
+    { name: 'GitHub', icon: '🐙', url: 'https://github.com/Balagueracris99' },
     { name: 'Email', icon: '📧', url: 'mailto:cbalaguera177@gmail.com' },
     { name: 'Teléfono', icon: '📱', url: 'tel:+573046676878' }
   ];
