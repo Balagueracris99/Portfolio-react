@@ -52,8 +52,8 @@ export class ProjectsComponent {
       description: 'Sitio web personal responsive desarrollado con Angular, con animaciones modernas y diseño minimalista optimizado para GitHub Pages.',
       image: '💼',
       technologies: ['Angular', 'TypeScript', 'CSS3', 'GitHub Pages'],
-      link: '#',
-      github: '#'
+      link: 'https://app.netlify.com/teams/balagueracris99/projects',
+      github: 'https://github.com/Balagueracris99'
     }
   ];
 }
