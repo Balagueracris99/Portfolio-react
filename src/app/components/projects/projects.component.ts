@@ -40,14 +40,6 @@ export class ProjectsComponent {
       github: '#'
     },
     {
-      title: 'Sistema con Laravel',
-      description: 'Aplicación web desarrollada con Laravel, implementando modelos, migraciones, rutas y vistas siguiendo las mejores prácticas del framework.',
-      image: '🚀',
-      technologies: ['Laravel', 'PHP', 'MySQL', 'Blade'],
-      link: '#',
-      github: '#'
-    },
-    {
       title: 'Portfolio Personal',
       description: 'Sitio web personal responsive desarrollado con Angular, con animaciones modernas y diseño minimalista optimizado para GitHub Pages.',
       image: '💼',
