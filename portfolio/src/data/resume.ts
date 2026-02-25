@@ -240,6 +240,11 @@ export const resume: Resume = {
   ],
   certifications: [
     {
+      name: "Junior Software Developer",
+      issuer: "Amazon",
+      date: "Feb 2026",
+    },
+    {
       name: "Introduction to Cyberattacks",
       issuer: "New York University",
       date: "Feb 2026",
