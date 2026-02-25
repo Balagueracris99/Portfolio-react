@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { resume } from "../data/resume";
+import { answerFromProfile } from "../lib/profileChat";
 
 type Role = "user" | "assistant";
 type ChatMessage = { role: Role; content: string };
-
-const DEFAULT_ENDPOINT = "/.netlify/functions/chat";
 
 function cn(...classes: Array<string | false | null | undefined>) {
   return classes.filter(Boolean).join(" ");
@@ -15,11 +15,10 @@ export function Chatbot(props: { name: string }) {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: `Hola, soy el asistente del portfolio de ${props.name}. Pregúntame lo que quieras sobre su perfil (experiencia, habilidades, cursos, proyectos).`,
+      content: `Hola. Puedes preguntarme sobre el perfil de ${props.name}: experiencia, habilidades, cursos, educación, proyectos y contacto.`,
     },
   ]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   const listRef = useRef<HTMLDivElement | null>(null);
 
@@ -45,7 +44,6 @@ export function Chatbot(props: { name: string }) {
     const trimmed = text.trim();
     if (!trimmed || loading) return;
 
-    setError(null);
     setLoading(true);
     setInput("");
 
@@ -53,39 +51,7 @@ export function Chatbot(props: { name: string }) {
     setMessages(nextMessages);
 
     try {
-      const res = await fetch(DEFAULT_ENDPOINT, {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          message: trimmed,
-          history: nextMessages
-            .filter((m) => m.role === "user" || m.role === "assistant")
-            .slice(-10)
-            .map((m) => ({ role: m.role, content: m.content })),
-        }),
-      });
-
-      const data = (await res.json().catch(() => null)) as
-        | { answer?: string; error?: string; details?: string; hint?: string; status?: number; requestId?: string }
-        | null;
-
-      if (!res.ok) {
-        const hint =
-          window.location.hostname === "localhost"
-            ? "Tip: para probar funciones en local, usa `netlify dev` o despliega en Netlify."
-            : undefined;
-        const extra = [
-          data?.hint,
-          data?.details,
-          data?.requestId ? `requestId: ${data.requestId}` : undefined,
-          hint,
-        ]
-          .filter(Boolean)
-          .join("\n");
-        throw new Error([data?.error, extra].filter(Boolean).join("\n"));
-      }
-
-      const answer = data?.answer?.trim();
+      const answer = answerFromProfile(trimmed, resume);
       setMessages((prev) => [
         ...prev,
         {
@@ -93,9 +59,11 @@ export function Chatbot(props: { name: string }) {
           content: answer || "No pude generar una respuesta. Intenta de nuevo.",
         },
       ]);
-    } catch (e) {
-      const msg = e instanceof Error ? e.message : "Error enviando el mensaje";
-      setError(msg);
+    } catch {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "No pude generar una respuesta. Intenta de nuevo." },
+      ]);
     } finally {
       setLoading(false);
     }
@@ -173,11 +141,6 @@ export function Chatbot(props: { name: string }) {
               {loading ? (
                 <div className="text-xs font-medium text-zinc-400">
                   Escribiendo…
-                </div>
-              ) : null}
-              {error ? (
-                <div className="rounded-xl border border-red-500/30 bg-red-500/10 px-3 py-2 text-xs text-red-200">
-                  {error}
                 </div>
               ) : null}
             </div>
