@@ -6,6 +6,28 @@ type ChatMessage = {
   content: string;
 };
 
+const BUILD_TAG = "chat-fn-v2";
+
+function resolveApiKey() {
+  return (
+    process.env.OPENAI_API_KEY ||
+    process.env.OPENAI_APIKEY ||
+    process.env.OPENAI_KEY ||
+    ""
+  ).trim();
+}
+
+function openAiEnvDiagnostics() {
+  const keys = Object.keys(process.env ?? {});
+  const openaiKeys = keys.filter((k) => k.toUpperCase().includes("OPENAI")).sort();
+  const present = {
+    OPENAI_API_KEY: Boolean(process.env.OPENAI_API_KEY?.trim()),
+    OPENAI_APIKEY: Boolean(process.env.OPENAI_APIKEY?.trim()),
+    OPENAI_KEY: Boolean(process.env.OPENAI_KEY?.trim()),
+  };
+  return { openaiKeys, present };
+}
+
 function profileContext(): string {
   const lines: string[] = [];
   lines.push(`Nombre: ${resume.name}`);
@@ -87,15 +109,36 @@ export const handler: Handler = async (event) => {
     };
   }
 
+  const apiKey = resolveApiKey();
+  const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
+
+  // Health check (útil para verificar variables de entorno en Netlify)
+  if (event.httpMethod === "GET") {
+    const diag = openAiEnvDiagnostics();
+    return json(200, {
+      ok: true,
+      buildTag: BUILD_TAG,
+      context: process.env.CONTEXT ?? null,
+      commitRef: process.env.COMMIT_REF ?? null,
+      deployId: process.env.DEPLOY_ID ?? null,
+      hasApiKey: Boolean(apiKey),
+      ...diag,
+      model,
+    });
+  }
+
   if (event.httpMethod !== "POST") {
     return json(405, { error: "Method not allowed" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
+    const diag = openAiEnvDiagnostics();
     return json(500, {
-      error:
-        "Falta la variable de entorno OPENAI_API_KEY en Netlify. Configúrala en Site settings → Environment variables.",
+      error: "Falta la variable de entorno OPENAI_API_KEY en Netlify.",
+      hint: "Netlify → Site settings → Environment variables → OPENAI_API_KEY",
+      buildTag: BUILD_TAG,
+      context: process.env.CONTEXT ?? null,
+      ...diag,
     });
   }
 
@@ -126,8 +169,6 @@ export const handler: Handler = async (event) => {
     profileContext(),
   ].join("\n");
 
-  const model = process.env.OPENAI_MODEL ?? "gpt-4o-mini";
-
   const upstream = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -146,10 +187,31 @@ export const handler: Handler = async (event) => {
   });
 
   if (!upstream.ok) {
-    const text = await upstream.text().catch(() => "");
+    const contentType = upstream.headers.get("content-type") ?? "";
+    const requestId =
+      upstream.headers.get("x-request-id") ??
+      upstream.headers.get("openai-request-id") ??
+      undefined;
+
+    let detailsText = "";
+    let detailsJson: unknown = null;
+    try {
+      if (contentType.includes("application/json")) {
+        detailsJson = await upstream.json();
+        detailsText = JSON.stringify(detailsJson);
+      } else {
+        detailsText = await upstream.text();
+      }
+    } catch {
+      detailsText = "";
+    }
+
     return json(502, {
       error: "Error llamando a la API de IA",
-      details: text.slice(0, 2000),
+      status: upstream.status,
+      requestId,
+      details: detailsText.slice(0, 2000),
+      detailsJson,
     });
   }
 

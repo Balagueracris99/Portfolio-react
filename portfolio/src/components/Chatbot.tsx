@@ -66,7 +66,7 @@ export function Chatbot(props: { name: string }) {
       });
 
       const data = (await res.json().catch(() => null)) as
-        | { answer?: string; error?: string; details?: string }
+        | { answer?: string; error?: string; details?: string; hint?: string; status?: number; requestId?: string }
         | null;
 
       if (!res.ok) {
@@ -74,7 +74,15 @@ export function Chatbot(props: { name: string }) {
           window.location.hostname === "localhost"
             ? "Tip: para probar funciones en local, usa `netlify dev` o despliega en Netlify."
             : undefined;
-        throw new Error([data?.error, hint].filter(Boolean).join(" "));
+        const extra = [
+          data?.hint,
+          data?.details,
+          data?.requestId ? `requestId: ${data.requestId}` : undefined,
+          hint,
+        ]
+          .filter(Boolean)
+          .join("\n");
+        throw new Error([data?.error, extra].filter(Boolean).join("\n"));
       }
 
       const answer = data?.answer?.trim();
@@ -88,14 +96,6 @@ export function Chatbot(props: { name: string }) {
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Error enviando el mensaje";
       setError(msg);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "assistant",
-          content:
-            "No pude responder en este momento. Revisa la configuración del chatbot e intenta de nuevo.",
-        },
-      ]);
     } finally {
       setLoading(false);
     }
