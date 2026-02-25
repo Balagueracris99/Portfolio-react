@@ -1,40 +1,4 @@
 {
-<<<<<<< HEAD
-  "name": "portfolio-angular",
-  "version": "1.0.0",
-  "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "build:gh-pages": "ng build --configuration production --base-href /Portfolio_1/",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "deploy": "npm run build:gh-pages && npx angular-cli-ghpages --dir=dist/portfolio-angular/browser"
-  },
-  "private": true,
-  "dependencies": {
-    "@angular/animations": "^17.0.0",
-    "@angular/common": "^17.0.0",
-    "@angular/compiler": "^17.0.0",
-    "@angular/core": "^17.0.0",
-    "@angular/forms": "^17.0.0",
-    "@angular/platform-browser": "^17.0.0",
-    "@angular/platform-browser-dynamic": "^17.0.0",
-    "@angular/router": "^17.0.0",
-    "rxjs": "~7.8.0",
-    "tslib": "^2.3.0",
-    "zone.js": "~0.14.2"
-  },
-  "devDependencies": {
-    "@angular-devkit/build-angular": "^17.0.0",
-    "@angular/cli": "^17.0.0",
-    "@angular/compiler-cli": "^17.0.0",
-    "@types/node": "^20.10.0",
-    "angular-cli-ghpages": "^1.0.7",
-    "typescript": "~5.2.2"
-  }
-}
-=======
   "name": "portfolio_3-root",
   "private": true,
   "scripts": {
@@ -44,5 +8,3 @@
     "lint": "npm --prefix portfolio run lint"
   }
 }
-
->>>>>>> 0f79040 (Actualizacion del proyecto)
