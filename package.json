@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "portfolio-angular",
   "version": "1.0.0",
   "scripts": {
@@ -33,3 +34,15 @@
     "typescript": "~5.2.2"
   }
 }
+=======
+  "name": "portfolio_3-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix portfolio run dev",
+    "build": "npm --prefix portfolio run build",
+    "preview": "npm --prefix portfolio run preview",
+    "lint": "npm --prefix portfolio run lint"
+  }
+}
+
+>>>>>>> 0f79040 (Actualizacion del proyecto)
