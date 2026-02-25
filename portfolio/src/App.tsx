@@ -3,6 +3,7 @@ import { Footer } from "./components/Footer";
 import { Header } from "./components/Header";
 import { Section } from "./components/Section";
 import { resume } from "./data/resume";
+import { Chatbot } from "./components/Chatbot";
 
 export default function App() {
   const photoSrc = "/profile.png";
@@ -338,6 +339,7 @@ export default function App() {
       </main>
 
       <Footer name={resume.name} />
+      <Chatbot name={resume.name} />
     </div>
   );
 }
